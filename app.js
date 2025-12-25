@@ -2,22 +2,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running"));
-
-
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.use(session({
-  secret: "hostel-secret",
+  secret: process.env.SESSION_SECRET || "hostel-secret",
   resave: false,
   saveUninitialized: false
 }));
@@ -31,4 +23,4 @@ app.use("/", require("./routes/auth"));
 app.use("/student", require("./routes/student"));
 app.use("/admin", require("./routes/admin"));
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
