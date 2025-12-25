@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Welcome, <%= user.name %></h2>
+      <p>Student Dashboard</p>
+    </div>
+
+    <!-- Profile -->
+    <div class="card">
+      <h3>Your Details</h3>
+      <p><b>Email:</b> <%= user.email %></p>
+    </div>
+    
+<form method="POST" action="/logout" style="margin-bottom:20px">
+  <button class="btn red">Logout</button>
+</form>
+
+    <!-- Complaint Form -->
+    <div class="card">
+      <h3>Report a Problem</h3>
+      <form method="POST" action="/student/complaint">
+        <input type="text" name="title" placeholder="Problem Title" required>
+        <textarea name="description" placeholder="Describe the issue" required></textarea>
+        <button class="btn">Submit Complaint</button>
+      </form>
+    </div>
+
+    <!-- Complaints -->
+    <div class="card">
+      <h3>Your Complaints</h3>
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+        </tr>
+        <% complaints.forEach(c => { %>
+        <tr>
+          <td><%= c.title %></td>
+          <td><span class="status <%= c.status.replace(" ", "") %>"><%= c.status %></span></td>
+        </tr>
+        <% }) %>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
