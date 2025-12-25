@@ -1,27 +1,21 @@
-﻿{
-  ""name"": ""hostel-complaint-system"",
-  ""version"": ""1.0.0"",
-  ""main"": ""app.js"",
-  ""scripts"": {
-    ""start"": ""node app.js"",
-    ""dev"": ""nodemon app.js""
-  },
-  ""dependencies"": {
-    ""bcryptjs"": ""^2.4.3"",
-    ""connect-mongo"": ""^4.6.0"",
-    ""dotenv"": ""^16.0.0"",
-    ""ejs"": ""^3.1.8"",
-    ""express"": ""^4.18.2"",
-    ""express-session"": ""^1.17.3"",
-    ""mongoose"": ""^7.3.1""
-  },
-  ""devDependencies"": {
-    ""nodemon"": ""^2.0.22""
-  }
-}
 {
+  "name": "hostel-complaint-system",
+  "version": "1.0.0",
+  "description": "Hostel Complaint Management System",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "create-admin": "node scripts/createAdmin.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^8.5.1"
   }
 }
