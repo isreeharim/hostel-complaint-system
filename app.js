@@ -26,4 +26,14 @@ app.use("/student", require("./routes/student"));
 app.use("/admin", require("./routes/admin"));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running on port", PORT));
+const serverless = require("serverless-http");
+module.exports = serverless(app);
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+  await mongoose.connect(process.env.MONGO_URI);
+  isConnected = true;
+}
+
+connectDB();
