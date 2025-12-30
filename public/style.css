@@ -106,23 +106,38 @@ body {
   border: none;
 }
 
-/* TABLE */
+/* ===============================
+   COMPLAINT TABLE LAYOUT FIX
+   =============================== */
+
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 th, td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
-/* STATUS */
+/* Column widths */
+th:nth-child(1), td:nth-child(1) { width: 15%; }
+th:nth-child(2), td:nth-child(2) { width: 20%; }
+th:nth-child(3), td:nth-child(3) { width: 35%; }
+th:nth-child(4), td:nth-child(4) { width: 15%; }
+th:nth-child(5), td:nth-child(5) { width: 15%; }
+
+/* Status badge */
 .status {
-  padding: 5px 10px;
-  border-radius: 20px;
-  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
   font-size: 13px;
+  color: white;
   display: inline-block;
 }
 
@@ -130,3 +145,32 @@ th, td {
 .InProgress { background: #2563eb; }
 .Resolved { background: #16a34a; }
 
+/* Description box */
+.description-box {
+  max-height: 120px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  th {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  td {
+    border: none;
+    padding: 6px 0;
+  }
+}

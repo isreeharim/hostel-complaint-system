@@ -30,27 +30,39 @@
     </section>
 
     <section class="card">
-      <h3>Your Complaints</h3>
+  <h3>Your Complaints</h3>
 
-      <% if (complaints.length === 0) { %>
-        <p>No complaints submitted yet.</p>
-      <% } else { %>
-        <table>
-          <tr>
-            <th>Title</th>
-            <th>Status</th>
-          </tr>
-          <% complaints.forEach(c => { %>
-            <tr>
-              <td><%= c.title %></td>
-              <td class="status <%= c.status.replace(' ', '') %>">
-                <%= c.status %>
-              </td>
-            </tr>
-          <% }) %>
-        </table>
-      <% } %>
-    </section>
+  <% if (complaints.length === 0) { %>
+    <p>No complaints submitted yet.</p>
+  <% } else { %>
+
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Status</th>
+      </tr>
+
+      <% complaints.forEach(c => { %>
+        <tr>
+          <td><strong><%= c.title %></strong></td>
+          <td>
+            <div class="description-box">
+              <%= c.description %>
+            </div>
+          </td>
+          <td>
+            <span class="status <%= c.status.replace(' ', '') %>">
+              <%= c.status %>
+            </span>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+
+  <% } %>
+</section>
+
 
   </div>
 </body>

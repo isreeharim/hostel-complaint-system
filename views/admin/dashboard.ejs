@@ -15,47 +15,51 @@
     </header>
 
     <section class="card">
-      <h3>Student Complaints</h3>
+  <h3>Student Complaints</h3>
 
-      <% if (complaints.length === 0) { %>
-        <p>No complaints found.</p>
-      <% } else { %>
+  <% if (complaints.length === 0) { %>
+    <p>No complaints found.</p>
+  <% } else { %>
 
-        <table>
-          <tr>
-            <th>Student</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Update</th>
-          </tr>
+    <table>
+      <tr>
+        <th>Student</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Update</th>
+      </tr>
 
-          <% complaints.forEach(c => { %>
-            <tr>
-              <td><%= c.studentId.name %></td>
-              <td><%= c.title %></td>
-              <td style="max-width:300px;">
-                <%= c.description %>
-              </td>
-              <td class="status <%= c.status.replace(' ', '') %>">
-                <%= c.status %>
-              </td>
-              <td>
-                <form method="POST" action="/admin/status/<%= c._id %>">
-                  <select name="status">
-                    <option <%= c.status === "Pending" ? "selected" : "" %>>Pending</option>
-                    <option <%= c.status === "In Progress" ? "selected" : "" %>>In Progress</option>
-                    <option <%= c.status === "Resolved" ? "selected" : "" %>>Resolved</option>
-                  </select>
-                  <button type="submit">Update</button>
-                </form>
-              </td>
-            </tr>
-          <% }) %>
-        </table>
+      <% complaints.forEach(c => { %>
+        <tr>
+          <td><%= c.studentId.name %></td>
+          <td><strong><%= c.title %></strong></td>
+          <td>
+            <div class="description-box">
+              <%= c.description %>
+            </div>
+          </td>
+          <td>
+            <span class="status <%= c.status.replace(' ', '') %>">
+              <%= c.status %>
+            </span>
+          </td>
+          <td>
+            <form method="POST" action="/admin/status/<%= c._id %>">
+              <select name="status">
+                <option <%= c.status === "Pending" ? "selected" : "" %>>Pending</option>
+                <option <%= c.status === "In Progress" ? "selected" : "" %>>In Progress</option>
+                <option <%= c.status === "Resolved" ? "selected" : "" %>>Resolved</option>
+              </select>
+              <button type="submit">Update</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
 
-      <% } %>
-    </section>
+  <% } %>
+</section>
 
   </div>
 </body>
