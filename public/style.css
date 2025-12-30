@@ -480,3 +480,9 @@ body.dark .theme-btn {
 .clickable:hover {
   transform: scale(1.05);
 }
+
+
+button.demote {
+  background: #f59e0b;
+  color: #000;
+}

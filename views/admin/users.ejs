@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    /* Header layout - matching dashboard */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: radial-gradient(circle at top left, #1d4ed8, #020617);
+      color: white;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.6);
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    /* Theme toggle - exact match */
+    .theme-btn {
+      background: rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: #e5e7eb;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: white;
+      text-decoration: none;
+      border-radius: 999px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    .logout {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .logout:hover {
+      transform: translateY(-1px);
+    }
+    
+    /* Status badges - matching dashboard */
+    .status {
+      padding: 0.375rem 0.875rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .status.Pending { 
+      background: linear-gradient(135deg, #f97316, #fb923c); 
+      color: white; 
+    }
+    .status.Resolved { 
+      background: linear-gradient(135deg, #16a34a, #22c55e); 
+      color: white; 
+    }
+    
+    /* Dark mode styles */
+    body.dark .header {
+      background: radial-gradient(circle at top left, #1e40af, #020617);
+    }
+    body.dark .theme-btn {
+      background: rgba(15, 23, 42, 0.7);
+    }
+    body.dark .btn {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    }
+    body.dark .status.Pending { 
+      background: linear-gradient(135deg, #ea580c, #f97316); 
+    }
+    body.dark .status.Resolved { 
+      background: linear-gradient(135deg, #15803d, #16a34a); 
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header { flex-direction: column; gap: 1rem; text-align: center; }
+      .header-actions { order: -1; width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- HEADER WITH DARK MODE TOGGLE -->
+    <header class="header">
+      <h2>User Management</h2>
+      <div class="header-actions">
+        <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+        <a href="/admin/dashboard" class="btn">← Back to Dashboard</a>
+        <form method="POST" action="/logout" style="margin:0; display:inline;">
+          <button class="logout" type="submit">Logout</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- Users Table -->
+    <section class="card">
+      <table class="complaint-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if (!users || users.length === 0) { %>
+            <tr>
+              <td colspan="5" style="text-align:center; padding: 2rem; color: #6b7280;">
+                No users found
+              </td>
+            </tr>
+          <% } else { %>
+
+            <% users.forEach(function(u) { %>
+              <tr>
+                <td><strong><%= u.name %></strong></td>
+                <td><%= u.email %></td>
+                <td>
+                  <% if (u.role === "admin") { %>
+                    <span style="color: #3b82f6; font-weight: 600;">Admin</span>
+                  <% } else { %>
+                    <span style="color: #10b981;">Student</span>
+                  <% } %>
+                </td>
+
+                <td>
+                  <% if (u.isBlocked) { %>
+                    <span class="status Pending">Blocked</span>
+                  <% } else { %>
+                    <span class="status Resolved">Active</span>
+                  <% } %>
+                </td>
+
+                <td class="actions">
+                  <% if (u._id.toString() !== currentAdminId) { %>
+
+                    <!-- Block / Unblock -->
+                    <form
+                      method="POST"
+                      action="/admin/users/block/<%= u._id %>"
+                      class="inline-form"
+                    >
+                      <button class="danger">
+                        <%= u.isBlocked ? "Unblock" : "Block" %>
+                      </button>
+                    </form>
+
+                    <!-- Promote -->
+                    <% if (u.role === "student") { %>
+                      <form
+                        method="POST"
+                        action="/admin/users/promote/<%= u._id %>"
+                        class="inline-form"
+                      >
+                        <button>Promote → Admin</button>
+                      </form>
+                    <% } %>
+
+                    <!-- Demote -->
+                    <% if (u.role === "admin") { %>
+                      <form
+                        method="POST"
+                        action="/admin/users/demote/<%= u._id %>"
+                        class="inline-form"
+                      >
+                        <button class="demote">Demote → Student</button>
+                      </form>
+                    <% } %>
+
+                    <!-- Delete -->
+                    <form
+                      method="POST"
+                      action="/admin/users/delete/<%= u._id %>"
+                      class="inline-form"
+                      onsubmit="return confirm('Delete this user permanently?');"
+                    >
+                      <button class="danger">Delete</button>
+                    </form>
+
+                  <% } else { %>
+                    <span style="color: #6b7280; font-style: italic;">Current Admin</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+
+          <% } %>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <!-- DARK MODE SCRIPT - EXACT MATCH -->
+  <script>
+    const toggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme");
+    
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+      toggle.textContent = "☀️";
+    }
+    
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+        toggle.textContent = "☀️";
+      } else {
+        localStorage.setItem("theme", "light");
+        toggle.textContent = "🌙";
+      }
+    });
+  </script>
+
+</body>
+</html>
