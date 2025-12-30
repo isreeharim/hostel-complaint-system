@@ -129,3 +129,9 @@ th, td {
 .Pending { background: #f97316; }
 .InProgress { background: #2563eb; }
 .Resolved { background: #16a34a; }
+
+td {
+  vertical-align: top;
+  word-wrap: break-word;
+  white-space: normal;
+}
