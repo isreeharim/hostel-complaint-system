@@ -13,35 +13,33 @@ router.get("/signup", (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
-  const hashed = await bcrypt.hash(req.body.password, 10);
-  await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: hashed,
-    role: "student"
-  });
-  res.redirect("/");
+  try {
+    const hashed = await bcrypt.hash(req.body.password, 10);
+    await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: hashed,
+      role: "student"
+    });
+    res.redirect("/");
+  } catch (e) {
+    res.send("Signup failed");
+  }
 });
 
 router.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.redirect("/");
+  if (!user || !user.password) return res.send("Invalid login");
 
-  const match = await bcrypt.compare(req.body.password, user.password);
-  if (!match) return res.redirect("/");
+  const ok = await bcrypt.compare(req.body.password, user.password);
+  if (!ok) return res.send("Wrong password");
 
   req.session.user = user;
-
-  user.role === "admin"
-    ? res.redirect("/admin/dashboard")
-    : res.redirect("/student/dashboard");
+  res.redirect(user.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
 });
 
 router.post("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/");
-  });
+  req.session.destroy(() => res.redirect("/"));
 });
 
 module.exports = router;
-  

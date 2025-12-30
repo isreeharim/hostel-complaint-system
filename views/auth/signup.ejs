@@ -1,19 +1,25 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-  <title>Student Signup</title>
+  <title>Signup | Hostel Portal</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="container" style="max-width:400px;margin-top:100px">
-    <div class="card">
+  <div class="auth-container">
+    <div class="auth-card">
       <h2>Student Signup</h2>
+
       <form method="POST" action="/signup">
-        <input name="name" placeholder="Full Name" required>
-        <input name="email" type="email" placeholder="Email" required>
-        <input name="password" type="password" placeholder="Password" required>
-        <button class="btn">Create Account</button>
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
       </form>
+
+      <p class="switch">
+        Already have an account?
+        <a href="/">Login</a>
+      </p>
     </div>
   </div>
 </body>

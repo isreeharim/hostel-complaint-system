@@ -6,43 +6,57 @@
 </head>
 <body>
   <div class="container">
-    <div class="header">
+
+    <header class="header">
       <h2>Admin Dashboard</h2>
-      <p>Manage Student Complaints</p>
-    </div>
-    
-<form method="POST" action="/logout" style="margin-bottom:20px">
-  <button class="btn red">Logout</button>
-</form>
+      <form method="POST" action="/logout">
+        <button class="logout">Logout</button>
+      </form>
+    </header>
 
-    <div class="card">
-      <table>
-        <tr>
-          <th>Student</th>
-          <th>Problem</th>
-          <th>Status</th>
-          <th>Update</th>
-        </tr>
+    <section class="card">
+      <h3>Student Complaints</h3>
 
-        <% complaints.forEach(c => { %>
-        <tr>
-          <td><%= c.studentId.name %></td>
-          <td><%= c.title %></td>
-          <td><span class="status <%= c.status.replace(" ", "") %>"><%= c.status %></span></td>
-          <td>
-            <form method="POST" action="/admin/status/<%= c._id %>">
-              <select name="status">
-                <option>Pending</option>
-                <option>In Progress</option>
-                <option>Resolved</option>
-              </select>
-              <button class="btn small">Update</button>
-            </form>
-          </td>
-        </tr>
-        <% }) %>
-      </table>
-    </div>
+      <% if (complaints.length === 0) { %>
+        <p>No complaints found.</p>
+      <% } else { %>
+
+        <table>
+          <tr>
+            <th>Student</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Update</th>
+          </tr>
+
+          <% complaints.forEach(c => { %>
+            <tr>
+              <td><%= c.studentId.name %></td>
+              <td><%= c.title %></td>
+              <td style="max-width:300px;">
+                <%= c.description %>
+              </td>
+              <td class="status <%= c.status.replace(' ', '') %>">
+                <%= c.status %>
+              </td>
+              <td>
+                <form method="POST" action="/admin/status/<%= c._id %>">
+                  <select name="status">
+                    <option <%= c.status === "Pending" ? "selected" : "" %>>Pending</option>
+                    <option <%= c.status === "In Progress" ? "selected" : "" %>>In Progress</option>
+                    <option <%= c.status === "Resolved" ? "selected" : "" %>>Resolved</option>
+                  </select>
+                  <button type="submit">Update</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+
+      <% } %>
+    </section>
+
   </div>
 </body>
 </html>

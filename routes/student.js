@@ -6,10 +6,7 @@ const router = express.Router();
 
 router.get("/dashboard", isStudent, async (req, res) => {
   const complaints = await Complaint.find({ studentId: req.session.user._id });
-  res.render("student/dashboard", {
-    user: req.session.user,
-    complaints
-  });
+  res.render("student/dashboard", { user: req.session.user, complaints });
 });
 
 router.post("/complaint", isStudent, async (req, res) => {
