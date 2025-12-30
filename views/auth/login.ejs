@@ -1,19 +1,40 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Login | Hostel Portal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="auth-container">
     <div class="auth-card">
-      <h2>Hostel Complaint System</h2>
-      <p class="subtitle">Login</p>
+      <div class="auth-brand">
+        <div class="brand-mark">
+          <span class="brand-dot"></span>
+        </div>
+        <div class="brand-text">
+          <h2>Hostel Complaint System</h2>
+          <p class="subtitle">Sign in to continue</p>
+        </div>
+      </div>
 
       <form method="POST" action="/login">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          required
+        >
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        >
+        <button type="submit">
+          Login
+        </button>
       </form>
 
       <p class="switch">

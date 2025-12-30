@@ -38,5 +38,16 @@ router.post("/status/:id", isAdmin, async (req, res) => {
   }
 });
 
+/* Admin delete complaint */
+router.post("/delete/:id", isAdmin, async (req, res) => {
+  try {
+    await Complaint.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/dashboard");
+  } catch (err) {
+    console.error(err);
+    res.send("Failed to delete complaint");
+  }
+});
+
 
 module.exports = router;

@@ -1,90 +1,231 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="container">
 
     <header class="header">
-      <h2>Admin Dashboard</h2>
-      <form method="POST" action="/logout">
-        <button class="logout">Logout</button>
-      </form>
+      <div class="header-left">
+        <div class="brand-mark">
+          <span class="brand-dot"></span>
+        </div>
+        <div class="brand-text">
+          <h1>Admin Dashboard</h1>
+          <p class="muted">Manage student complaints & actions</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme toggle -->
+        <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+          🌙
+        </button>
+
+        <!-- User / Logout group -->
+        <div class="user-shell">
+          <div class="user-meta">
+            <span class="user-name">Administrator</span>
+            <span class="user-role muted">System Admin</span>
+          </div>
+          <form method="POST" action="/logout">
+            <button class="logout" type="submit">Logout</button>
+          </form>
+        </div>
+      </div>
     </header>
 
     <section class="card">
-  <h3>Student Complaints</h3>
+      <div class="card-title-row">
+        <div>
+          <h2>Student Complaints</h2>
+          <p class="muted">Track, update and resolve complaints efficiently</p>
+        </div>
+      </div>
 
-  <% if (complaints.length === 0) { %>
-    <p>No complaints found.</p>
-  <% } else { %>
+      <% if (!complaints || complaints.length === 0) { %>
+        <p class="muted">No complaints found.</p>
+      <% } else { %>
 
-    <table>
-      <tr>
-        <th>Student</th>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Image</th>
-        <th>Status</th>
-        <th>Update</th>
-      </tr>
+        <table class="complaint-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Image</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-      <% complaints.forEach(c => { %>
-        <tr>
-          <td><%= c.studentId.name %></td>
+          <tbody>
+            <% complaints.forEach(function(c) { %>
+              <tr>
+                <td>
+                  <span><%= c.studentId?.name || "—" %></span><br>
+                  <span class="muted small-text"><%= c.studentId?.id || "" %></span>
+                </td>
 
-          <td>
-            <strong><%= c.title %></strong>
-          </td>
+                <td>
+                  <strong><%= c.title %></strong>
+                </td>
 
-          <td>
-            <div class="description-box">
-              <%= c.description %>
-            </div>
-          </td>
+                <td>
+                  <div class="description-box">
+                    <%= c.description %>
+                  </div>
+                </td>
 
-          <td>
-            <% if (c.image) { %>
-              <img
-                class="thumb"
-                src="<%= c.image %>"
-                alt="Complaint Image"
-              >
-            <% } else { %>
-              <span style="color:#888;">No image</span>
-            <% } %>
-          </td>
+                <td>
+                  <% if (c.image) { %>
+                    <img
+  class="thumb"
+  src="<%= c.image %>"
+  alt="Complaint Image"
+  style="cursor:zoom-in"
+  onclick="openImage('<%= c.image %>')"
+>
 
-          <td>
-            <span class="status <%= c.status.replace(' ', '') %>">
-              <%= c.status %>
-            </span>
-          </td>
 
-          <td>
-            <form method="POST" action="/admin/status/<%= c._id %>">
-              <select name="status">
-  <option value="Pending" <%= c.status === "Pending" ? "selected" : "" %>>
-    Pending
-  </option>
-  <option value="In Progress" <%= c.status === "In Progress" ? "selected" : "" %>>
-    In Progress
-  </option>
-  <option value="Resolved" <%= c.status === "Resolved" ? "selected" : "" %>>
-    Resolved
-  </option>
-</select>
-              <button type="submit">Update</button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
-    </table>
+                  <% } else { %>
+                    <span class="muted">No image</span>
+                  <% } %>
+                </td>
 
-  <% } %>
-</section>
+                <td>
+                  <% if (c.status === "Pending") { %>
+                    <span class="status Pending">Pending</span>
+                  <% } else if (c.status === "In Progress") { %>
+                    <span class="status InProgress">In Progress</span>
+                  <% } else { %>
+                    <span class="status Resolved">Resolved</span>
+                  <% } %>
+                </td>
+
+                <td class="actions">
+                  <!-- Update status -->
+                  <form
+                    method="POST"
+                    action="/admin/status/<%= c._id %>"
+                    class="inline-form"
+                  >
+                    <select name="status">
+                      <option value="Pending" <%= c.status==="Pending"?"selected":"" %>>Pending</option>
+                      <option value="In Progress" <%= c.status==="In Progress"?"selected":"" %>>In Progress</option>
+                      <option value="Resolved" <%= c.status==="Resolved"?"selected":"" %>>Resolved</option>
+                    </select>
+                    <button type="submit">Update</button>
+                  </form>
+
+                  <!-- Delete -->
+                  <form
+                    method="POST"
+                    action="/admin/delete/<%= c._id %>"
+                    onsubmit="return confirm('Delete this complaint permanently?');"
+                    class="inline-form"
+                  >
+                    <button type="submit" class="danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+      <% } %>
+    </section>
+
+    <script>
+      const toggle = document.getElementById("themeToggle");
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+        toggle.textContent = "☀️";
+      }
+
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+
+        if (document.body.classList.contains("dark")) {
+          localStorage.setItem("theme", "dark");
+          toggle.textContent = "☀️";
+        } else {
+          localStorage.setItem("theme", "light");
+          toggle.textContent = "🌙";
+        }
+      });
+    </script>
+
+
+<script>
+  const modal = document.getElementById("imageModal");
+  const modalImg = document.getElementById("modalImage");
+  const closeBtn = document.querySelector(".close-modal");
+
+  function openImage(src) {
+    modal.style.display = "block";
+    modalImg.src = src;
+  }
+
+  closeBtn.onclick = () => {
+    modal.style.display = "none";
+  };
+
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+
+
+<!-- Image Popup Modal -->
+<div id="imgModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999;">
+  <span
+    onclick="closeImage()"
+    style="position:absolute; top:20px; right:30px; color:#fff; font-size:36px; cursor:pointer;"
+  >&times;</span>
+
+  <img
+    id="imgModalContent"
+    style="margin:auto; display:block; max-width:90%; max-height:85%; border-radius:12px;"
+  >
+</div>
+
+<script>
+  function openImage(src) {
+    const modal = document.getElementById("imgModal");
+    const img = document.getElementById("imgModalContent");
+
+    img.src = src;
+    modal.style.display = "flex";
+  }
+
+  function closeImage() {
+    document.getElementById("imgModal").style.display = "none";
+  }
+
+  // Close when clicking outside image
+  document.getElementById("imgModal").addEventListener("click", function(e) {
+    if (e.target.id === "imgModal") {
+      closeImage();
+    }
+  });
+</script>
+
+
+    <!-- Image Modal -->
+<div id="imageModal" class="img-modal">
+  <span class="close-modal">&times;</span>
+  <img id="modalImage" class="modal-content">
+</div>
 
 
   </div>

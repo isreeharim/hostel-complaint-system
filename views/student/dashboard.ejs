@@ -1,128 +1,272 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Student Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="container">
 
     <header class="header">
-      <h2>Welcome, <%= user.name %></h2>
-      <form method="POST" action="/logout">
-        <button class="logout">Logout</button>
-      </form>
+      <div class="header-left">
+        <div class="brand-mark">
+          <span class="brand-dot"></span>
+        </div>
+        <div class="brand-text">
+          <h1>Welcome, <%= user.name %></h1>
+          <p class="muted">Student dashboard & complaint center</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme toggle -->
+        <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+          🌙
+        </button>
+
+        <!-- User / Logout group -->
+        <div class="user-shell">
+          <div class="user-meta">
+            <span class="user-name"><%= user.name %></span>
+            <span class="user-role muted">Student</span>
+          </div>
+          <form method="POST" action="/logout">
+            <button class="logout" type="submit">Logout</button>
+          </form>
+        </div>
+      </div>
     </header>
 
+    <!-- Student details -->
     <section class="card">
-      <h3>Your Details</h3>
+      <div class="card-title-row">
+        <div>
+          <h2>Your Details</h2>
+          <p class="muted">Keep your profile information up to date</p>
+        </div>
+      </div>
       <p><b>Name:</b> <%= user.name %></p>
       <p><b>Email:</b> <%= user.email %></p>
     </section>
 
+    <!-- Report a problem -->
     <section class="card">
-  <h3>Report a Problem</h3>
+      <div class="card-title-row">
+        <div>
+          <h2>Report a Problem</h2>
+          <p class="muted">Describe the issue so the admin can assist you</p>
+        </div>
+      </div>
 
-  <form
-    method="POST"
-    action="/student/complaint"
-    enctype="multipart/form-data"
+      <form
+        method="POST"
+        action="/student/complaint"
+        enctype="multipart/form-data"
+      >
+        <input
+          type="text"
+          name="title"
+          placeholder="Problem title"
+          required
+        />
+
+        <textarea
+          name="description"
+          placeholder="Describe the issue in detail"
+          rows="4"
+          required
+        ></textarea>
+
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+        />
+
+        <small class="muted">
+          Optional: Upload an image (JPG, PNG)
+        </small>
+
+        <br><br>
+
+        <button type="submit">
+          Submit Complaint
+        </button>
+      </form>
+    </section>
+
+    <!-- Your complaints -->
+    <section class="card">
+      <div class="card-title-row">
+        <div>
+          <h2>Your Complaints</h2>
+          <p class="muted">View the status and history of your complaints</p>
+        </div>
+      </div>
+
+      <% if (!complaints || complaints.length === 0) { %>
+        <p class="muted">No complaints submitted yet.</p>
+      <% } else { %>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Image</th>
+              <th>Status</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% complaints.forEach(function(c) { %>
+              <tr>
+                <td><strong><%= c.title %></strong></td>
+
+                <td>
+                  <div class="description-box">
+                    <%= c.description %>
+                  </div>
+                </td>
+
+                <td>
+                  <% if (c.image) { %>
+                    <img
+  class="thumb"
+  src="<%= c.image %>"
+  alt="Complaint Image"
+  style="cursor:zoom-in"
+  onclick="openImage('<%= c.image %>')"
+>
+
+
+                  <% } else { %>
+                    <span class="muted">No image</span>
+                  <% } %>
+                </td>
+
+                <td>
+                  <% if (c.status === "Pending") { %>
+                    <span class="status Pending">Pending</span>
+                  <% } else if (c.status === "In Progress") { %>
+                    <span class="status InProgress">In Progress</span>
+                  <% } else if (c.status === "Resolved") { %>
+                    <span class="status Resolved">Resolved</span>
+                  <% } else { %>
+                    <span class="muted">-</span>
+                  <% } %>
+                </td>
+
+                <td>
+                  <form
+                    method="POST"
+                    action="/student/complaint/delete/<%= c._id %>"
+                    onsubmit="return confirm('Delete this complaint?');"
+                  >
+                    <button type="submit" class="danger">
+                      Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+      <% } %>
+    </section>
+
+    <script>
+      const toggle = document.getElementById("themeToggle");
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+        toggle.textContent = "☀️";
+      }
+
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+
+        if (document.body.classList.contains("dark")) {
+          localStorage.setItem("theme", "dark");
+          toggle.textContent = "☀️";
+        } else {
+          localStorage.setItem("theme", "light");
+          toggle.textContent = "🌙";
+        }
+      });
+    </script>
+
+
+<script>
+  const modal = document.getElementById("imageModal");
+  const modalImg = document.getElementById("modalImage");
+  const closeBtn = document.querySelector(".close-modal");
+
+  function openImage(src) {
+    modal.style.display = "block";
+    modalImg.src = src;
+  }
+
+  closeBtn.onclick = () => {
+    modal.style.display = "none";
+  };
+
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+
+
+<!-- Image Popup Modal -->
+<div id="imgModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999;">
+  <span
+    onclick="closeImage()"
+    style="position:absolute; top:20px; right:30px; color:#fff; font-size:36px; cursor:pointer;"
+  >&times;</span>
+
+  <img
+    id="imgModalContent"
+    style="margin:auto; display:block; max-width:90%; max-height:85%; border-radius:12px;"
   >
-    <input
-      type="text"
-      name="title"
-      placeholder="Problem Title"
-      required
-    />
-
-    <textarea
-      name="description"
-      placeholder="Describe the issue in detail"
-      rows="4"
-      required
-    ></textarea>
-
-    <input
-      type="file"
-      name="image"
-      accept="image/*"
-    />
-
-    <small style="color:#666;">
-      Optional: Upload an image (jpg, png)
-    </small>
-
-    <br><br>
-
-    <button type="submit">
-      Submit Complaint
-    </button>
-  </form>
-</section>
+</div>
 
 
-    <section class="card">
-  <h3>Your Complaints</h3>
+<script>
+  function openImage(src) {
+    const modal = document.getElementById("imgModal");
+    const img = document.getElementById("imgModalContent");
 
-  <% if (!complaints || complaints.length === 0) { %>
-    <p>No complaints submitted yet.</p>
-  <% } else { %>
+    img.src = src;
+    modal.style.display = "flex";
+  }
 
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Image</th>
-          <th>Status</th>
-        </tr>
-      </thead>
+  function closeImage() {
+    document.getElementById("imgModal").style.display = "none";
+  }
 
-      <tbody>
-        <% complaints.forEach(function(c) { %>
-          <tr>
-            <td><strong><%= c.title %></strong></td>
-
-            <td>
-              <div class="description-box">
-                <%= c.description %>
-              </div>
-            </td>
-
-            <td>
-              <% if (c.image) { %>
-                <img
-                  class="thumb"
-                  src="<%= c.image %>"
-                  alt="Complaint Image"
-                >
-              <% } else { %>
-                <span style="color:#888;">No image</span>
-              <% } %>
-            </td>
-
-            <td>
-  <% if (c.status === "Pending") { %>
-    <span class="status Pending">Pending</span>
-  <% } else if (c.status === "In Progress") { %>
-    <span class="status InProgress">In Progress</span>
-  <% } else if (c.status === "Resolved") { %>
-    <span class="status Resolved">Resolved</span>
-  <% } else { %>
-    <span>-</span>
-  <% } %>
-</td>
-
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-
-  <% } %>
-</section>
+  // Close when clicking outside image
+  document.getElementById("imgModal").addEventListener("click", function(e) {
+    if (e.target.id === "imgModal") {
+      closeImage();
+    }
+  });
+</script>
 
 
 
+<!-- Image Modal -->
+<div id="imageModal" class="img-modal">
+  <span class="close-modal">&times;</span>
+  <img id="modalImage" class="modal-content">
+</div>
 
 
   </div>

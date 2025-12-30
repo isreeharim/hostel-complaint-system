@@ -39,5 +39,20 @@ router.post(
     }
   }
 );
+// DELETE complaint (student)
+router.post("/complaint/delete/:id", isStudent, async (req, res) => {
+  try {
+    await Complaint.deleteOne({
+      _id: req.params.id,
+      studentId: req.session.user._id
+    });
+
+    res.redirect("/student/dashboard");
+  } catch (err) {
+    console.error(err);
+    res.send("Failed to delete complaint");
+  }
+});
+
 
 module.exports = router;
