@@ -4,16 +4,39 @@ const { isAdmin } = require("../middlewares/auth");
 
 const router = express.Router();
 
+/* Admin Dashboard */
 router.get("/dashboard", isAdmin, async (req, res) => {
-  const complaints = await Complaint.find().populate("studentId");
-  res.render("admin/dashboard", { complaints });
+  try {
+    const complaints = await Complaint.find()
+      .populate("studentId")
+      .sort({ createdAt: -1 });
+
+    res.render("admin/dashboard", { complaints });
+  } catch (err) {
+    console.error(err);
+    res.send("Error loading admin dashboard");
+  }
 });
 
+/* Update Complaint Status */
 router.post("/status/:id", isAdmin, async (req, res) => {
-  await Complaint.findByIdAndUpdate(req.params.id, {
-    status: req.body.status
-  });
-  res.redirect("/admin/dashboard");
+  try {
+    const status = req.body.status?.trim();
+
+    console.log("Updating status to:", status); // DEBUG
+
+    await Complaint.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { runValidators: true }
+    );
+
+    res.redirect("/admin/dashboard");
+  } catch (err) {
+    console.error(err);
+    res.send("Status update failed");
+  }
 });
+
 
 module.exports = router;

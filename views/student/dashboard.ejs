@@ -21,47 +21,108 @@
     </section>
 
     <section class="card">
-      <h3>Report a Problem</h3>
-      <form method="POST" action="/student/complaint">
-        <input type="text" name="title" placeholder="Problem Title" required>
-        <textarea name="description" placeholder="Describe the issue" required></textarea>
-        <button type="submit">Submit Complaint</button>
-      </form>
-    </section>
+  <h3>Report a Problem</h3>
+
+  <form
+    method="POST"
+    action="/student/complaint"
+    enctype="multipart/form-data"
+  >
+    <input
+      type="text"
+      name="title"
+      placeholder="Problem Title"
+      required
+    />
+
+    <textarea
+      name="description"
+      placeholder="Describe the issue in detail"
+      rows="4"
+      required
+    ></textarea>
+
+    <input
+      type="file"
+      name="image"
+      accept="image/*"
+    />
+
+    <small style="color:#666;">
+      Optional: Upload an image (jpg, png)
+    </small>
+
+    <br><br>
+
+    <button type="submit">
+      Submit Complaint
+    </button>
+  </form>
+</section>
+
 
     <section class="card">
   <h3>Your Complaints</h3>
 
-  <% if (complaints.length === 0) { %>
+  <% if (!complaints || complaints.length === 0) { %>
     <p>No complaints submitted yet.</p>
   <% } else { %>
 
     <table>
-      <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Status</th>
-      </tr>
-
-      <% complaints.forEach(c => { %>
+      <thead>
         <tr>
-          <td><strong><%= c.title %></strong></td>
-          <td>
-            <div class="description-box">
-              <%= c.description %>
-            </div>
-          </td>
-          <td>
-            <span class="status <%= c.status.replace(' ', '') %>">
-              <%= c.status %>
-            </span>
-          </td>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Image</th>
+          <th>Status</th>
         </tr>
-      <% }) %>
+      </thead>
+
+      <tbody>
+        <% complaints.forEach(function(c) { %>
+          <tr>
+            <td><strong><%= c.title %></strong></td>
+
+            <td>
+              <div class="description-box">
+                <%= c.description %>
+              </div>
+            </td>
+
+            <td>
+              <% if (c.image) { %>
+                <img
+                  class="thumb"
+                  src="<%= c.image %>"
+                  alt="Complaint Image"
+                >
+              <% } else { %>
+                <span style="color:#888;">No image</span>
+              <% } %>
+            </td>
+
+            <td>
+  <% if (c.status === "Pending") { %>
+    <span class="status Pending">Pending</span>
+  <% } else if (c.status === "In Progress") { %>
+    <span class="status InProgress">In Progress</span>
+  <% } else if (c.status === "Resolved") { %>
+    <span class="status Resolved">Resolved</span>
+  <% } else { %>
+    <span>-</span>
+  <% } %>
+</td>
+
+          </tr>
+        <% }) %>
+      </tbody>
     </table>
 
   <% } %>
 </section>
+
+
+
 
 
   </div>

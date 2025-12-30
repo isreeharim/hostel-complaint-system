@@ -105,10 +105,7 @@ body {
   color: white;
   border: none;
 }
-
-/* ===============================
-   COMPLAINT TABLE LAYOUT FIX
-   =============================== */
+/* ===== Complaint Layout Refinement ===== */
 
 table {
   width: 100%;
@@ -121,29 +118,17 @@ th, td {
   border-bottom: 1px solid #e5e7eb;
   vertical-align: top;
   text-align: left;
-  word-wrap: break-word;
   white-space: normal;
+  word-break: break-word;
 }
 
-/* Column widths */
+/* Column widths (Admin: 6 cols | Student: first 4 apply) */
 th:nth-child(1), td:nth-child(1) { width: 15%; }
-th:nth-child(2), td:nth-child(2) { width: 20%; }
-th:nth-child(3), td:nth-child(3) { width: 35%; }
-th:nth-child(4), td:nth-child(4) { width: 15%; }
-th:nth-child(5), td:nth-child(5) { width: 15%; }
-
-/* Status badge */
-.status {
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 13px;
-  color: white;
-  display: inline-block;
-}
-
-.Pending { background: #f97316; }
-.InProgress { background: #2563eb; }
-.Resolved { background: #16a34a; }
+th:nth-child(2), td:nth-child(2) { width: 18%; }
+th:nth-child(3), td:nth-child(3) { width: 30%; }
+th:nth-child(4), td:nth-child(4) { width: 12%; }
+th:nth-child(5), td:nth-child(5) { width: 12%; }
+th:nth-child(6), td:nth-child(6) { width: 13%; }
 
 /* Description box */
 .description-box {
@@ -152,25 +137,42 @@ th:nth-child(5), td:nth-child(5) { width: 15%; }
   line-height: 1.5;
 }
 
-/* Mobile responsive */
+/* Image thumbnail */
+.thumb {
+  max-width: 110px;
+  max-height: 110px;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Status badge */
+.status {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  color: #fff;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Mobile cards */
 @media (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  th {
-    display: none;
-  }
-
+  table, thead, tbody, th, td, tr { display: block; }
+  thead { display: none; }
   tr {
-    margin-bottom: 15px;
+    margin-bottom: 14px;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px;
+    background: #fff;
   }
-
   td {
     border: none;
     padding: 6px 0;
   }
 }
+
+.Pending { background: #f97316; }
+.InProgress { background: #2563eb; }
+.Resolved { background: #16a34a; }

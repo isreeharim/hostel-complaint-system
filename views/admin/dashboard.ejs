@@ -26,6 +26,7 @@
         <th>Student</th>
         <th>Title</th>
         <th>Description</th>
+        <th>Image</th>
         <th>Status</th>
         <th>Update</th>
       </tr>
@@ -33,24 +34,48 @@
       <% complaints.forEach(c => { %>
         <tr>
           <td><%= c.studentId.name %></td>
-          <td><strong><%= c.title %></strong></td>
+
+          <td>
+            <strong><%= c.title %></strong>
+          </td>
+
           <td>
             <div class="description-box">
               <%= c.description %>
             </div>
           </td>
+
+          <td>
+            <% if (c.image) { %>
+              <img
+                class="thumb"
+                src="<%= c.image %>"
+                alt="Complaint Image"
+              >
+            <% } else { %>
+              <span style="color:#888;">No image</span>
+            <% } %>
+          </td>
+
           <td>
             <span class="status <%= c.status.replace(' ', '') %>">
               <%= c.status %>
             </span>
           </td>
+
           <td>
             <form method="POST" action="/admin/status/<%= c._id %>">
               <select name="status">
-                <option <%= c.status === "Pending" ? "selected" : "" %>>Pending</option>
-                <option <%= c.status === "In Progress" ? "selected" : "" %>>In Progress</option>
-                <option <%= c.status === "Resolved" ? "selected" : "" %>>Resolved</option>
-              </select>
+  <option value="Pending" <%= c.status === "Pending" ? "selected" : "" %>>
+    Pending
+  </option>
+  <option value="In Progress" <%= c.status === "In Progress" ? "selected" : "" %>>
+    In Progress
+  </option>
+  <option value="Resolved" <%= c.status === "Resolved" ? "selected" : "" %>>
+    Resolved
+  </option>
+</select>
               <button type="submit">Update</button>
             </form>
           </td>
@@ -60,6 +85,7 @@
 
   <% } %>
 </section>
+
 
   </div>
 </body>
